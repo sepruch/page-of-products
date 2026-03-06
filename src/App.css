@@ -1,0 +1,18 @@
+.page-wrapper {
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: #B8C7FE;
+  background-image: url('./assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.buy-button {
+  background-color: #00CA58;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
