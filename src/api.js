@@ -54,7 +54,7 @@ const mockProducts = [
         "id": 7,
         "title": "Dyson Supersonic",
         "price": 29990,
-        "category": "Техника для дома",
+        "category": "Дом",
         "image": "/src/assets/Dyson.jpg",
         "description": "Фен для волос / Мощность 1600 Вт / 3 скорости / 4 температурных режима / 5 магнитных насадок"
     },
@@ -86,7 +86,7 @@ const mockProducts = [
         "id": 11,
         "title": "Xiaomi Robot Vacuum S10+",
         "price": 17490,
-        "category": "Умный дом",
+        "category": "Дом",
         "image": "/src/assets/Xiaomi.jpg",
         "description": "Робот-пылесос / Сухая и влажная уборка / Мощность всасывания 4000 Па / Лазерная навигация LDS / 5200 мАч"
     },
@@ -94,7 +94,7 @@ const mockProducts = [
         "id": 12,
         "title": "Apple TV 4K",
         "price": 16990,
-        "category": "ТВ и Видео",
+        "category": "Дом",
         "image": "/src/assets/AppleTV.jpg",
         "description": "ТВ-приставка / Чип A15 Bionic / 64GB / Поддержка 4K Dolby Vision и HDR10+ / Пульт Siri Remote (USB-C)"
     }
