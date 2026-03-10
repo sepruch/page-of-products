@@ -3,6 +3,7 @@ import { fetchProducts } from "./api.js";
 import './App.css';
 import searchIcon from './assets/search.svg';
 import filterIcon from './assets/filter.svg';
+import cartIcon from './assets/cart.svg';
 
 function App() {
     const [products, setProducts] = useState([]);
@@ -11,6 +12,9 @@ function App() {
     const [selectedCategory, setSelectedCategory] = useState('Все');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+
+    const [cart, setCart] = useState([]);
+    const [isCartOpen, setIsCartOpen] = useState(false);
 
     useEffect(() => {
         fetchProducts().then((data) => {
@@ -23,10 +27,11 @@ function App() {
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') {
                 setSelectedProduct(null);
+                setIsCartOpen(false);
             }
         };
 
-        if (selectedProduct) {
+        if (selectedProduct || isCartOpen) {
             window.addEventListener('keydown', handleKeyDown);
             document.body.style.overflow = 'hidden';
         } else {
@@ -37,7 +42,7 @@ function App() {
             window.removeEventListener('keydown', handleKeyDown);
             document.body.style.overflow = 'auto';
         };
-    }, [selectedProduct]);
+    }, [selectedProduct, isCartOpen]);
 
     const categories = ['Все', ...new Set(products.map(p => p.category))];
 
@@ -46,6 +51,22 @@ function App() {
         const matchesCategory = selectedCategory === 'Все' || product.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
+
+    const addToCart = (product) => {
+        setCart(prevCart => {
+            const existing = prevCart.find(item => item.id === product.id);
+            if (existing) {
+                return prevCart.map(item =>
+                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                );
+            }
+            return [...prevCart, { ...product, quantity: 1 }];
+        });
+    };
+
+    const removeFromCart = (id) => {
+        setCart(prevCart => prevCart.filter(item => item.id !== id));
+    };
 
     return (
         <main className="page-wrapper">
@@ -89,7 +110,9 @@ function App() {
 
             <section className="products-grid">
                 {isLoading ? (
-                    <div className="loader">Загрузка товаров</div>
+                    <div className="loader-container">
+                        <div className="spinner"></div>
+                    </div>
                 ) : filteredProducts.length === 0 ? (
                     <p className="not-found">Мы ничего не нашли</p>
                 ) : (
@@ -101,13 +124,29 @@ function App() {
                                 <h2>{product.title}</h2>
                                 <div className="product-bottom">
                                     <span className="product-price">{product.price} ₽</span>
-                                    <button className="buy-button" onClick={(e) => e.stopPropagation()}>Купить</button>
+                                    <button
+                                        className="buy-button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            addToCart(product);
+                                        }}>
+                                        Купить
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     ))
                 )}
             </section>
+
+            <button className="floating-cart-btn" onClick={() => setIsCartOpen(true)}>
+                <img src={cartIcon} alt="корзина" className="cart-icon" />
+                {cart.length > 0 && (
+                    <span className="floating-cart-badge">
+                        {cart.reduce((sum, item) => sum + item.quantity, 0)}
+                    </span>
+                )}
+            </button>
 
             {selectedProduct && (
                 <div className="modal-overlay" onClick={() => setSelectedProduct(null)}>
@@ -124,9 +163,47 @@ function App() {
 
                                 <div className="modal-footer">
                                     <span className="modal-price-large">{selectedProduct.price} ₽</span>
-                                    <button className="buy-button modal-buy-btn">Добавить в корзину</button>
+                                    <button
+                                        className="buy-button modal-buy-btn"
+                                        onClick={() => {
+                                            addToCart(selectedProduct);
+                                            setSelectedProduct(null);
+                                        }}>
+                                        Добавить в корзину
+                                    </button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isCartOpen && (
+                <div className="cart-overlay" onClick={() => setIsCartOpen(false)}>
+                    <div className="cart-sidebar" onClick={(e) => e.stopPropagation()}>
+                        <div className="cart-header">
+                            <h2>Корзина</h2>
+                            <button className="close-cart" onClick={() => setIsCartOpen(false)}>✕</button>
+                        </div>
+                        <div className="cart-items">
+                            {cart.length === 0 ? (
+                                <p className="empty-cart">Корзина пуста</p>
+                            ) : (
+                                cart.map((item) => (
+                                    <div key={item.id} className="cart-item">
+                                        <img src={item.image} alt={item.title} />
+                                        <div className="cart-item-info">
+                                            <h4>{item.title}</h4>
+                                            <p>{item.price} ₽ x {item.quantity}</p>
+                                        </div>
+                                        <button className="cart-item-remove" onClick={() => removeFromCart(item.id)}>Удалить</button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                        <div className="cart-footer">
+                            <h3>Итого: <span>{cart.reduce((sum, item) => sum + item.price * item.quantity, 0)} ₽</span></h3>
+                            <button className="checkout-btn">Оформить заказ</button>
                         </div>
                     </div>
                 </div>
