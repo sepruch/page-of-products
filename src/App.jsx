@@ -5,6 +5,28 @@ import searchIcon from './assets/search.svg';
 import filterIcon from './assets/filter.svg';
 import cartIcon from './assets/cart.svg';
 
+const getLevenshteinDistance = (a, b) => {
+    if (a.length === 0) return b.length;
+    if (b.length === 0) return a.length;
+
+    const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+
+    for (let i = 0; i <= b.length; i++) matrix[i][0] = i;
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+            const indicator = a[j - 1] === b[i - 1] ? 0 : 1;
+            matrix[i][j] = Math.min(
+                matrix[i][j - 1] + 1,
+                matrix[i - 1][j] + 1,
+                matrix[i - 1][j - 1] + indicator
+            );
+        }
+    }
+    return matrix[b.length][a.length];
+};
+
 function App() {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -47,9 +69,27 @@ function App() {
     const categories = ['Все', ...new Set(products.map(p => p.category))];
 
     const filteredProducts = products.filter((product) => {
-        const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = selectedCategory === 'Все' || product.category === selectedCategory;
-        return matchesSearch && matchesCategory;
+        if (!matchesCategory) return false;
+        const query = searchQuery.trim().toLowerCase();
+
+        if (!query) return true;
+        const title = product.title.toLowerCase();
+
+        if (title.includes(query)) return true;
+        const titleWords = title.split(/[\s,.-]+/);
+        const queryWords = query.split(/[\s,.-]+/);
+
+        return queryWords.every(qWord => {
+            if (!qWord) return true;
+            const maxErrors = qWord.length <= 4 ? 1 : 2;
+
+            return titleWords.some(tWord => {
+                if (tWord.includes(qWord)) return true;
+                const distance = getLevenshteinDistance(qWord, tWord);
+                return distance <= maxErrors;
+            });
+        });
     });
 
     const addToCart = (product) => {
@@ -159,7 +199,13 @@ function App() {
                             <div className="modal-details">
                                 <span className="product-category">{selectedProduct.category}</span>
                                 <h2 className="modal-title">{selectedProduct.title}</h2>
-                                <p className="modal-description-full">{selectedProduct.description}</p>
+                                <ul className="modal-specs-list">
+                                    {selectedProduct.description.split('/').map((spec, index) => (
+                                        <li key={index} className="modal-spec-item">
+                                            {spec.trim()}
+                                        </li>
+                                    ))}
+                                </ul>
 
                                 <div className="modal-footer">
                                     <span className="modal-price-large">{selectedProduct.price} ₽</span>

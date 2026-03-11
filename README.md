@@ -1,18 +1,38 @@
-# React + Vite
+# Store page of products
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Одностраничное приложение (SPA) каталога техники, разработанное на React и Vite. Проект демонстрирует современные подходы во фронтенд-разработке, включая управление состоянием, фильтрацию данных в реальном времени, нечеткий поиск и работу с корзиной покупок.
 
-Currently, two official plugins are available:
+## Функционал приложения
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* Умный поиск: Реализован алгоритм расстояния Левенштейна для нахождения товаров даже при допущении опечаток в поисковом запросе.
+* Категории: Динамическая генерация списка категорий на основе исходных данных и моментальная фильтрация каталога.
+* Корзина покупок: Добавление товаров, автоматический подсчет количества одинаковых позиций, удаление элементов и расчет итоговой суммы заказа. Выполнена в виде всплывающей боковой панели (Sidebar).
+* Модальное окно: Детальный просмотр информации о товаре. Описание автоматически парсится и преобразуется в структурированный маркированный список. Окно поддерживает закрытие по клику на фон и клавише Escape.
+* Адаптивный дизайн: Интерфейс корректно отображается на ПК, планшетах и мобильных телефонах с использованием CSS Grid и Flexbox.
 
-## React Compiler
+## Стек технологий
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+* React 19 (использование хуков useState, useEffect)
+* Vite (сборщик проекта)
+* Vanilla CSS (CSS Variables, анимации, медиазапросы)
+* JavaScript (ES6+)
 
-Note: This will impact Vite dev & build performances.
+## Запуск проекта на локальном компьютере
 
-## Expanding the ESLint configuration
+Для запуска проекта убедитесь, что у вас установлен Node.js.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Клонируйте репозиторий:
+   git clone https://github.com/sepruch/page-of-products.git
+
+2. Перейдите в директорию проекта:
+   cd ecomtech
+
+3. Установите необходимые зависимости:
+   npm install
+
+4. Запустите сервер для разработки:
+   npm run dev
+
+5. Откройте в браузере локальную ссылку (обычно http://localhost:5173/).
+
+**Ссылка для просмотра готового продукта:**
